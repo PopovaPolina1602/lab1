@@ -1,0 +1,54 @@
+.LC0:
+        .string "\320\242\321\200\320\265\320\261\321\203\320\265\321\202\321\201\321\217 \320\262\320\262\320\265\321\201\321\202\320\270 \321\207\320\270\321\201\320\273\320\276 - "
+.LC1:
+        .string "%d"
+.LC2:
+        .string "\320\232\320\262\320\260\320\264\321\200\320\260\321\202\320\275\321\213\320\271 \320\272\320\276\321\200\320\265\320\275\321\214 \321\200\320\260\320\262\320\265\320\275 %d\n"
+
+// Начало функции main
+main:
+        // Входящие параметры функции сохраняются на стеке
+        push    rbp
+        // Записывается значение  стека в rbp
+        mov     rbp, rsp
+        // Резервируется место для локальных переменных
+        sub     rsp, 16
+        // Выводится printf
+        mov     edi, OFFSET FLAT:.LC0
+        mov     eax, 0
+        // Вызывается printf
+        call    printf
+        // Инициализация переменных
+        mov     DWORD PTR [rbp-4], 1 // i = 1
+        mov     DWORD PTR [rbp-8], 0 // sum = 0
+        mov     DWORD PTR [rbp-12], 0 // count = 0
+        // Ввод с клавиатуры 
+        lea     rax, [rbp-16]
+        mov     rsi, rax
+        mov     edi, OFFSET FLAT:.LC1
+        mov     eax, 0
+        // Вызывается scanf
+        call    __isoc99_scanf
+        // Прыжок на начало цикла
+        jmp     .L2
+.L3:
+        // Адресация переменных в стеке
+        mov     eax, DWORD PTR [rbp-4]
+        add     DWORD PTR [rbp-12], eax // count += i
+        add     DWORD PTR [rbp-4], 2 // i += 2
+        add     DWORD PTR [rbp-8], 1 // sum += 1
+.L2:
+        // Проверка условия выхода из цикла
+        mov     eax, DWORD PTR [rbp-16]
+        cmp     DWORD PTR [rbp-12], eax
+        jl      .L3
+        // Вывод printf
+        mov     eax, DWORD PTR [rbp-8]
+        mov     esi, eax
+        mov     edi, OFFSET FLAT:.LC2
+        mov     eax, 0
+        call    printf
+        // Завершение функции
+        mov     eax, 0
+        leave
+        ret
